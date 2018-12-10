@@ -1,3 +1,4 @@
+/*
 #include <vector>
 #include <string>
 #include <iostream>
@@ -39,6 +40,15 @@ int main(){
 	cout << solution.canVisitAllRooms(v);
 }
 
+*/
+
+#include <stdio.h>
+#include <windows.h>
+int main()
+{
+    printf("hello world!/n");
+    system("pause");
+}
 
 /*
 #include <iostream>
