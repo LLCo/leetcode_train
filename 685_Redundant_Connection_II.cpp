@@ -50,14 +50,86 @@ private:
 class Solution {
 public:
     vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
-        ;
+
+        //Search the node that has two edge point it. And the two edges.
+        vector<int> search(edges.size() + 1, -1);
+        int node, i=0;
+        bool flag = false;
+        int m;
+        vector<int> edgeA, edgeB;
+
+        for(auto edge : edges){
+            if(search[edge[1]] == -1){
+              search[edge[1]] = edge[0];
+            }else{
+                edgeA = {search[edge[1]], edge[1]};
+                edgeB = edge;
+                flag = true;
+                break;
+            }
+            i++; // use to recode the location of egdeB
+        }
+
+        // Find two edge point, Try to delete the edgeB, and then test this graph to known whether it's rooted tree.
+        if(flag){ 
+          edges.erase(edges.begin() + i); // delete edgeB from graph. 
+          if(isRootedTree(edges)) return edgeB;
+          return edgeA;
+        }else{ // To find the hoop;
+          auto hoops = get_hoops(search);
+          for(int i=0; i<edges.size(); ++i){
+            for(auto hoop : hoops){
+              if(edges[edges.size() - 1 - i][0] == hoop[0] && edges[edges.size() - 1 - i][1] == hoop[1]) return hoop;
+            }
+          }
+        }
+        return {0, 0};
+    }
+
+    vector<vector<int>> get_hoops(vector<int>& parents){
+      
+      int node = parents[1];
+      vector<vector<int>> hoops;
+      // enter the hoop
+      int i=0;
+      while(i++<parents.size()){ 
+        node = parents[node];
+      }
+
+      // save the hoop
+      int start = node;
+      node=parents[node];
+      while (node != start){
+        hoops.push_back({parents[node], node});
+        node=parents[node];
+      }
+
+      // return the hoops
+      return hoops;
+    }
+
+    bool isRootedTree(vector<vector<int>>& edges){
+      // search root. 
+      int root_num = 0;
+      vector<bool> search(edges.size() + 1, false);
+      for(auto edge : edges){
+        search[edge[1]] = true;
+      }
+      for(auto num : search){
+        root_num += num;
+      }
+
+      return root_num == edges.size() - 1;
     }
 };
 
 int main(){
-  vector<vector<int>> a = {{2, 1}, {3, 1}, {4, 2}, {1, 4}};
+  vector<vector<int>> a = {{1, 2}, {1, 3}, {2, 3}};
+  vector<vector<int>> b = {{1, 2}, {2, 3}, {3, 1}, {4, 1}};
+  vector<vector<int>> c = {{1, 2}, {2, 3}, {3, 1}, {1, 4}};
+
   Solution solu;
-  auto egde = solu.findRedundantDirectedConnection(a);
+  auto egde = solu.findRedundantDirectedConnection(b);
   cout << egde[0] << ' ' << egde[1] << endl;
   return 0;
 }
